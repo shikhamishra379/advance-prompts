@@ -1,0 +1,7 @@
+{
+  "name": "Copy of E-Commerce Visual Prompt Generator",
+  "description": "A professional-grade B2B tool for generating high-quality product photography blueprints using Gemini AI. Create detailed prompts for Midjourney, DALL-E, and Stable Diffusion.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
