@@ -56,11 +56,11 @@ const App: React.FC = () => {
       
       // Check for common API errors
       if (error.message?.includes("429")) {
-        errorMessage = "Quota Limit Exceeded. The AI is a bit busy or you've reached your free tier limit. Please wait 60 seconds and try again.";
+        errorMessage = "Quota Limit Exceeded (429). You have exceeded the free tier quota for this model. Please wait a moment or check your API billing tier.";
       } else if (error.message?.includes("403")) {
-        errorMessage = "Authentication failed. Please verify that your Gemini API Key is correctly configured in your deployment settings.";
+        errorMessage = "Authentication failed (403). Please verify that your Gemini API Key is correctly configured.";
       } else if (error.message?.includes("404")) {
-        errorMessage = "Model not found. We've updated the engine, please refresh and try again.";
+        errorMessage = "Model not found (404). The requested model is not available for this API key.";
       } else {
         errorMessage = error.message || "Unknown Error";
       }
@@ -82,7 +82,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden relative">
       <Header 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
@@ -110,12 +110,19 @@ const App: React.FC = () => {
         </div>
       </main>
 
+      {/* Footer Signature */}
+      <footer className="bg-white border-t border-slate-200 py-3 px-6 text-center z-20">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+          VisiPro Master Engine &bull; Made by SM
+        </p>
+      </footer>
+
       {activeTab === 'form' && (
         <button
           type="button"
           onClick={handleGenerate}
           disabled={loading}
-          className="lg:hidden fixed bottom-6 right-6 bg-violet-600 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all z-50 disabled:opacity-50"
+          className="lg:hidden fixed bottom-16 right-6 bg-violet-600 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-2 hover:bg-violet-700 active:scale-95 transition-all z-50 disabled:opacity-50"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
