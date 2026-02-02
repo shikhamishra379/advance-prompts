@@ -50,10 +50,22 @@ const App: React.FC = () => {
       setOutputs(results);
       setActiveTab('results');
     } catch (error: any) {
-      // Detailed logging for debugging in production
       console.error("VisiPro Generation Error:", error);
-      const errorMessage = error?.message || "Unknown Error";
-      alert(`Generation failed: ${errorMessage}\n\nPlease check your browser console for more details.`);
+      
+      let errorMessage = "An unexpected error occurred.";
+      
+      // Check for common API errors
+      if (error.message?.includes("429")) {
+        errorMessage = "Quota Limit Exceeded. The AI is a bit busy or you've reached your free tier limit. Please wait 60 seconds and try again.";
+      } else if (error.message?.includes("403")) {
+        errorMessage = "Authentication failed. Please verify that your Gemini API Key is correctly configured in your deployment settings.";
+      } else if (error.message?.includes("404")) {
+        errorMessage = "Model not found. We've updated the engine, please refresh and try again.";
+      } else {
+        errorMessage = error.message || "Unknown Error";
+      }
+
+      alert(`Generation failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

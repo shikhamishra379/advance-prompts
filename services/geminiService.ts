@@ -20,48 +20,55 @@ export class GeminiService {
     
     ${packContext}
     
-    Return a JSON array of ${data.modelEnabled ? '8' : '6'} objects.`;
+    Return a JSON array of ${data.modelEnabled ? '8' : '6'} objects. Each object must include a creative title, professional purpose, and technical breakdown.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: `Create the photography master suite for ${data.productName} as JSON.`,
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              id: { type: Type.STRING },
-              title: { type: Type.STRING },
-              purpose: { type: Type.STRING },
-              description: { type: Type.STRING },
-              fullPrompt: { type: Type.STRING },
-              sections: {
-                type: Type.OBJECT,
-                properties: {
-                  header: { type: Type.STRING },
-                  scene: { type: Type.STRING },
-                  placement: { type: Type.STRING },
-                  supporting: { type: Type.STRING },
-                  dynamic: { type: Type.STRING },
-                  lighting: { type: Type.STRING },
-                  camera: { type: Type.STRING },
-                  color: { type: Type.STRING },
-                  tech: { type: Type.STRING },
-                  quality: { type: Type.STRING },
-                  negative: { type: Type.STRING },
-                },
-                required: ["header", "scene", "placement", "supporting", "dynamic", "lighting", "camera", "color", "tech", "quality", "negative"]
-              }
-            },
-            required: ["id", "title", "purpose", "description", "fullPrompt", "sections"]
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `Create the photography master suite for ${data.productName} as JSON.`,
+        config: {
+          systemInstruction: systemPrompt,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                id: { type: Type.STRING },
+                title: { type: Type.STRING },
+                purpose: { type: Type.STRING },
+                description: { type: Type.STRING },
+                fullPrompt: { type: Type.STRING },
+                sections: {
+                  type: Type.OBJECT,
+                  properties: {
+                    header: { type: Type.STRING },
+                    scene: { type: Type.STRING },
+                    placement: { type: Type.STRING },
+                    supporting: { type: Type.STRING },
+                    dynamic: { type: Type.STRING },
+                    lighting: { type: Type.STRING },
+                    camera: { type: Type.STRING },
+                    color: { type: Type.STRING },
+                    tech: { type: Type.STRING },
+                    quality: { type: Type.STRING },
+                    negative: { type: Type.STRING },
+                  },
+                  required: ["header", "scene", "placement", "supporting", "dynamic", "lighting", "camera", "color", "tech", "quality", "negative"]
+                }
+              },
+              required: ["id", "title", "purpose", "description", "fullPrompt", "sections"]
+            }
           }
-        }
-      },
-    });
+        },
+      });
 
-    return JSON.parse(response.text || '[]');
+      const text = response.text;
+      if (!text) throw new Error("Empty response from AI");
+      return JSON.parse(text);
+    } catch (error) {
+      console.error("Gemini Generation Error:", error);
+      throw error;
+    }
   }
 }
