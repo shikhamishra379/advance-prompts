@@ -56,11 +56,11 @@ const App: React.FC = () => {
       
       // Check for common API errors
       if (error.message?.includes("429")) {
-        errorMessage = "Quota Limit Exceeded (429). You have exceeded the free tier quota for this model. Please wait a moment or check your API billing tier.";
+        errorMessage = "Quota Limit Exceeded (429). You have reached the limit for free tier requests. Please wait 60 seconds or try a different API key.";
       } else if (error.message?.includes("403")) {
-        errorMessage = "Authentication failed (403). Please verify that your Gemini API Key is correctly configured.";
+        errorMessage = "Authentication failed (403). Your API Key might be invalid or restricted.";
       } else if (error.message?.includes("404")) {
-        errorMessage = "Model not found (404). The requested model is not available for this API key.";
+        errorMessage = "Model not found (404). This version of Gemini is not available in your region.";
       } else {
         errorMessage = error.message || "Unknown Error";
       }
