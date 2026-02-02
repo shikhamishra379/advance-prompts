@@ -11,21 +11,32 @@ export class GeminiService {
          Focus on the arrangement (symmetrical line, artistic cluster, staggered depth) of all items in the pack.` 
       : "Focus on the individual product as the main hero.";
 
-    const systemPrompt = `You are an expert product photography director. 
-    Generate a set of high-end photography blueprints for:
-    - Name: ${data.productName}
+    const modelContext = data.modelEnabled 
+      ? `CRITICAL INSTRUCTION: The user has ENABLED a human model. 
+         You MUST generate exactly 8 variations. 
+         VARIATIONS 7 AND 8 MUST be "Interaction Blueprints" featuring a human model.
+         The human model persona/action is: "${data.modelPersona}".
+         For these two specific variations, the human MUST be the primary interactive element with the product (holding it, using it, or posing alongside it).`
+      : `Generate exactly 6 variations focused purely on the product and environment. Do NOT include humans.`;
+
+    const systemPrompt = `You are an expert product photography director for a high-end agency. 
+    Generate a set of professional photography blueprints for:
+    - Product Name: ${data.productName}
     - Category: ${data.category}
-    - Branding: ${data.brandPositioning}
+    - Brand Positioning: ${data.brandPositioning}
+    - Visual Styles: ${data.styles.join(', ')}
     - Technical: ${data.resolution} resolution, ${data.aspectRatio} aspect ratio, ${data.lightingStyle} lighting.
     
     ${packContext}
+    ${modelContext}
     
-    Return a JSON array of ${data.modelEnabled ? '8' : '6'} objects. Each object must include a creative title, professional purpose, and technical breakdown.`;
+    Return a JSON array of objects. Each object must include a creative title, professional purpose, and technical breakdown.
+    The "fullPrompt" field must be a cohesive, detailed paragraph optimized for high-end AI image generators like Midjourney v6.`;
 
     try {
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Create the photography master suite for ${data.productName} as JSON.`,
+        contents: `Create the photography master suite for ${data.productName} as JSON. Include the requested ${data.modelEnabled ? '8' : '6'} variations.`,
         config: {
           systemInstruction: systemPrompt,
           responseMimeType: "application/json",
